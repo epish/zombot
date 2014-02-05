@@ -24,8 +24,6 @@ class VK():
                     params = match.group(1)
                     break
             if params is not None:
-                if "security_check" in params:
-                    raise ValueError('Security check is required')
                 return json.loads(params)
         return params
 
@@ -45,7 +43,8 @@ class VK():
         command = GameSTART(lang=u'en', info=self._getUserInfo(),
                       ad=u'user_apps', serverTime=server_time,
                       clientTime=client_time)
-        return command
+        friendsid = info=self._getFriendsId()
+        return command,friendsid
 
     def _getUserInfo(self):
         '''
@@ -70,6 +69,15 @@ class VK():
                  uid=long(info['uid']), country=info['country'],
                  sex=long(info['sex']), bdate=bdate)
         return game_info
+
+    def _getFriendsId(self):
+        '''
+        returns user info using vk api
+        '''
+        # get vk user info
+        api = vkontakte.api.API(token=self.__api_access_token)
+        info = api.friends.getAppUsers(format='json')
+        return info
 
     def _validateSessionCookies(self, session_cookies):
         valid = False

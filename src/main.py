@@ -12,7 +12,7 @@ from user_interface import UserPrompt
 
 logger = logging.getLogger('main')
 
-BRANCH = 'stable'
+BRANCH = 'master by Reydan'
 
 def mkdir_p(path):
     try:
@@ -25,7 +25,7 @@ def mkdir_p(path):
 
 
 def setup_basic_logging(gui_logger):
-    FORMAT = '%(asctime)-15s %(message)s'
+    FORMAT = '[%(asctime)s] %(message)s'
     logging.basicConfig(level=logging.INFO, format=FORMAT,
                         stream=MyLogger(gui_logger))
     connection_logger = logging.getLogger('connection')
@@ -55,8 +55,13 @@ def strip_special(string):
 
 def get_site(gui_input):
     settings = Settings()
+    default_user = settings.get_default_user()
     users = settings.getUsers()
-    selected_user = UserPrompt(gui_input).prompt_user('Select user:', users)
+    if default_user==None:
+        selected_user = UserPrompt(gui_input).prompt_user('Select user:', users)
+    else:
+		selected_user=users[int(default_user)]
+		print 'You selected "'+selected_user+'"'
     log_level = settings.get_file_log_level()
     setup_file_logging(strip_special(selected_user), log_level)
     settings.setUser(selected_user)

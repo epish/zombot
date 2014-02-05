@@ -2037,6 +2037,37 @@ class GameStone(GameType):
 class GameStoneGraveDouble(GameType):
     type = 'stoneGraveDouble'
 
+    def __init__(self, target=None,  # @ReservedAssignment
+                 startCounter=None,  # @ReservedAssignment
+                 materials=None,  # @ReservedAssignment
+                 doneCounter=None,  # @ReservedAssignment
+                 y=None,  # @ReservedAssignment
+                 x=None,  # @ReservedAssignment
+                 id=None):  # @ReservedAssignment
+        assert (doneCounter is None
+                or isinstance(doneCounter, long))
+        assert (id is None
+                or isinstance(id, long))
+        assert (materials is None
+                or isinstance(materials, list))
+        assert (startCounter is None
+                or isinstance(startCounter, long))
+        assert (target is None
+                or isinstance(target, NoneType))
+        assert (x is None
+                or isinstance(x, long))
+        assert (y is None
+                or isinstance(y, long))
+        self.doneCounter = doneCounter
+        self.id = id
+        self.item = '@SC_STONE_GRAVE2'
+        self.materials = materials
+        self.startCounter = startCounter
+        self.target = target
+        self.type = 'stoneGraveDouble'
+        self.x = x
+        self.y = y
+
 class GameStoneGrave(GameType):
     type = 'stoneGrave'
 
@@ -2133,6 +2164,20 @@ class GameThanksgivingTable(GameType):
         self.x = x
         self.y = y
 
+class GameCookSpeed(GameAction):
+    type = 'item'
+
+    def __init__(self, itemId=None,  # @ReservedAssignment
+                 objId=None):  # @ReservedAssignment
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        assert (objId is None
+                or isinstance(objId, long))
+        self.action = 'speedup'
+        self.itemId = itemId
+        self.objId = objId
+        self.type = 'item'
+
 class GameCookItem(GameAction):
     type = 'item'
 
@@ -2156,6 +2201,222 @@ class GameCookStart(GameAction):
         self.action = 'start'
         self.objId = objId
         self.type = 'item'
+
+class GameCookStop(GameAction): 
+    #{"objId":803,"action":"stop","type":"item"}
+    type = 'item'
+    
+    def __init__(self, objId=None):  # @ReservedAssignment
+        assert (objId is None
+                or isinstance(objId, long))
+        self.objId = objId
+        self.type = 'item'
+        self.action = 'stop'
+
+
+class GameBuyItem(GameAction):
+    type = 'item'
+
+    def __init__(self, itemId=None,  # @ReservedAssignment
+                 objId=None,  # @ReservedAssignment
+                 y=None,  # @ReservedAssignment
+                 x=None):  # @ReservedAssignment
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        assert (objId is None
+                or isinstance(objId, long))
+        assert (x is None
+                or isinstance(x, long))
+        assert (y is None
+                or isinstance(y, long))
+        self.action = 'buy'
+        self.itemId = itemId
+        self.objId = objId
+        self.type = 'item'
+        self.x = x
+        self.y = y
+        
+class GameUseStorageItem(GameAction):
+    type = 'item'
+    def __init__(self,  # @ReservedAssignment
+                 itemId=None,
+                 y=None,  # @ReservedAssignment
+                 x=None):  # @ReservedAssignment
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        # assert (objId is None
+                # or isinstance(objId, long))
+        assert (x is None or isinstance(x, long))
+        assert (y is None  or isinstance(y, long))
+        self.action = 'useStorageItem'
+        self.itemId = itemId
+        # self.objId = objId
+        self.type = 'item'
+        self.x = x
+        self.y = y
+        
+class GameSellItem(GameAction):
+    type = 'item'
+
+    def __init__(self, 
+                count=None,
+                itemId=None ): #,  # @ReservedAssignment
+        assert (count is None
+                or isinstance(count, long))
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        self.count = count
+        self.action = 'sell'
+        self.itemId = itemId
+        self.type = 'item'
+
+class GameCookSpeedItem(GameAction):
+    type = 'item'
+    def __init__(self, itemId=None,  # @ReservedAssignment
+                 objId=None):  # @ReservedAssignment
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        assert (objId is None
+                or isinstance(objId, long))
+        self.action = 'speedup'
+        self.itemId = itemId
+        self.objId = objId
+        self.type = 'item'
+
+class GameCraftItem(GameAction): # "events":[{"objId":-4244,      "action":"craft",       "type":"item",          "itemId":"1"}],
+    type = 'item'
+
+    def __init__(self, itemId=None,  # @ReservedAssignment
+                 objId=None):   # @ReservedAssignment
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        assert (objId is None
+                or isinstance(objId, long))
+        self.action = 'craft'
+        self.itemId = itemId
+        self.objId = objId
+        self.type = 'item'
+
+# "events":[{"gift":{"msg":"","count":1,"user":"176312587","item":"@CAKE_RABBIT"},"action":"sendGift","id":42,"type":"gift"}],"user":"13504693","id":1368083522531,"type":"EVT"}
+# "events":[{"gift":{"msg":"","count":1,"user":"114688858","item":"@CAKE_RABBIT"},"action":"sendGift","id":41,"type":"gift"}],"user":"13504693","id":1368083522519,"type":"EVT"}
+# "events":[{"gift":{"item":"@CR_53","msg":"","count":1,"user":"176312587"},"action":"sendGift","id":55,"type":"gift"}],"type":"EVT"}
+#{"gift":{"item":"@CR_53","msg":"","count":1,"user":"176312587"},"action":"sendGift","id":55,"type":"gift"}
+# gift msg="", count=None, user=none,
+class GameSendGift(GameAction):
+    type = 'gift'
+    def __init__(self, id=None, gift=None):  # @ReservedAssignment
+        assert (gift is None
+                or isinstance(gift, dict))
+                #or isinstance(gift, GameGift))
+        self.action = 'sendGift'
+        self.gift = gift
+        self.type = 'gift'
+
+# {"itemId":"RED_TREE_FERTILIZER","action":"fertilize","objId":9072,"type":"item"}
+
+class GameFertilizeTree(GameAction):
+    type = 'item'
+    
+    def __init__(self, itemId=None, objId=None):  # @ReservedAssignment   , ItemId=None
+        assert (objId is None
+                or isinstance(objId, long))
+        assert (itemId is None
+                or isinstance(itemId, unicode))
+        self.itemId = itemId
+        self.action = 'fertilize'
+        self.objId = objId
+        self.type = 'item'
+
+
+class DailyBonus(GameAction):
+    type = 'dailyBonus'
+
+    def __init__(self):
+
+        self.type = 'dailyBonus'
+        self.action = 'play'
+
+
+
+class GameFertilizePlant(GameAction):
+    type = 'plant'
+
+    def __init__(self, jobFinishTime=None,  # @ReservedAssignment
+                 jobStartTime=None,  # @ReservedAssignment
+                 objId=None):  # @ReservedAssignment
+        assert (jobFinishTime is None
+                or isinstance(jobFinishTime, unicode))
+        assert (jobStartTime is None
+                or isinstance(jobStartTime, unicode))
+        assert (objId is None
+                or isinstance(objId, long))
+        self.action = 'fertilize'
+        self.jobFinishTime = jobFinishTime
+        self.jobStartTime = jobStartTime
+        self.objId = objId
+        self.type = 'plant'
+
+
+class GameTraderGrave(GameType):
+    type = 'traderGrave'
+
+    def __init__(self, started=None,  # @ReservedAssignment
+                 gainDone=None,  # @ReservedAssignment
+                 materials=None,  # @ReservedAssignment
+                 y=None,  # @ReservedAssignment
+                 x=None,  # @ReservedAssignment
+                 id=None):  # @ReservedAssignment
+        assert (gainDone is None
+                or isinstance(gainDone, long))
+        assert (id is None
+                or isinstance(id, long))
+        assert (started is None
+                or isinstance(started, bool))
+        assert (x is None
+                or isinstance(x, long))
+        assert (y is None
+                or isinstance(y, long))
+        self.gainDone = gainDone
+        self.id = id
+        self.item = '@SC_TRADER_GRAVE_COINS'
+        self.started = started
+        self.type = 'traderGrave'
+        self.x = x
+        self.y = y
+
+
+class GameTraderGraveWithBrains(GameType):
+    type = 'traderGraveWithBrains'
+
+    def __init__(self, gainTime=None,  # @ReservedAssignment
+                 started=None,  # @ReservedAssignment
+                 gainDone=None,  # @ReservedAssignment
+                 materials=None,  # @ReservedAssignment
+                 y=None,  # @ReservedAssignment
+                 x=None,  # @ReservedAssignment
+                 id=None):  # @ReservedAssignment
+        assert (gainDone is None
+                or isinstance(gainDone, long))
+        assert (id is None
+                or isinstance(id, long))
+        assert (started is None
+                or isinstance(started, bool))
+        assert (x is None
+                or isinstance(x, long))
+        assert (y is None
+                or isinstance(y, long))
+        self.gainDone = gainDone
+        self.gainTime = gainTime
+        self.id = id
+        self.item = '@SC_TRADER_GRAVE_WITH_BRAINS'
+        self.started = started
+        self.type = 'traderGraveWithBrains'
+        self.x = x
+        self.y = y
+
+
+class GamePirateCapture (GameAction):
+    type = 'pirateCaptureObject'
 
 
 if __name__ == '__main__':
