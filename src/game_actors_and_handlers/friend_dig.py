@@ -11,16 +11,26 @@ logger = logging.getLogger(__name__)
 class FriendDigger(BaseActor):
 
     def perform_action(self):
-        go_to_friend = {"action":"gameState","locationId":"main","user":"200961723","type":"gameState"}#{"id":8,"action":"gameState","objId":null,"locationId":"main","user":"200961723","type":"gameState"}
-        self._get_events_sender().send_game_events([go_to_friend])
+
+        friends = self._get_options()
+        friends = ['[BOT]friend1','[BOT]friend2'] + friends
+        logger.info(u"friends %s"%str(friends))
+        
+        #logger.info(u"gameState %s"%str(self._get_game_state().shovel))
+        self._get_game_state().shovel = 0
         logger.info(u"Иду к другу")
+        event_go_to_friend = {"action":"gameState","locationId":"main","user":"227218389","type":"gameState"}
+        self._get_events_sender().send_game_events([event_go_to_friend])
+        
  #       dig = {"x":63,"action":"remoteDig","y":57,"type":"item","objId":159}
 #        dig = {"x":72,"action":"remoteDig","y":92,"id":18,"type":"item","objId":41979} # 116164569
-        dig = {"objId":7203,"x":69,"action":"remoteDig","y":67,"type":"item"}
-        dig_count = 299
+        event_dig = {"objId":7203,"x":69,"action":"remoteDig","y":67,"type":"item"}
+        dig_count = 3
         for _ in range(dig_count):
-            self._get_events_sender().send_game_events([dig])
+            #self._get_events_sender().send_game_events([event_dig])
             logger.info(u"Копаю клад")
-        friend_ret ={"action":"gameState","locationId":"un_09","type":"gameState"} #{"id":14,"action":"gameState","objId":null,"locationId":"main","user":null,"type":"gameState"}
-        self._get_events_sender().send_game_events([friend_ret])
+        
         logger.info(u"Возвращаюсь на домашний")
+        event_return_home ={"action":"gameState","locationId":"main","type":"gameState"} #{"id":14,"action":"gameState","objId":null,"locationId":"main","user":null,"type":"gameState"}
+        self._get_events_sender().send_game_events([event_return_home])
+        
