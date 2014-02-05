@@ -2,6 +2,7 @@
 import logging
 from game_actors_and_handlers.base import BaseActor
 import collections
+from game_state.game_event import dict2obj, obj2dict
 
 logger = logging.getLogger(__name__)
 
@@ -53,5 +54,5 @@ class GameStateEventHandler(object):
         self.__game_state = game_state
 
     def handle(self, event_to_handle):
-        logger.info(u'Перешли на ' + event_to_handle.locationId)
+        logger.info(u'Перешли на ' + event_to_handle.location.id)
         self.__game_state.set_game_loc(event_to_handle)

@@ -24,6 +24,8 @@ class VK():
                     params = match.group(1)
                     break
             if params is not None:
+                if "security_check" in params:
+                    raise ValueError('Security check is required')
                 return json.loads(params)
         return params
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
-from game_state.game_types import GameDiggerGrave, GameDiggerGraveWithBrains,\
-    GamePickItem, GameGainItem, GamePickup
+import time
+from game_state.game_types import GameDiggerGrave, GameDiggerGraveWithBrains
 from game_actors_and_handlers.workers import ResourcePicker
 
 
@@ -18,6 +18,14 @@ class BagsPicker(ResourcePicker):
         return [GameDiggerGrave.type, GameDiggerGraveWithBrains.type]
     
     def perform_action(self):
+
+#        event = {"gift":{"item":"@CAKE_RABBIT","user":"4538650","count":100,"msg":""},"id":25,"type":"gift","action":"sendGift"}
+
+#        event = {"id":19,"gift":{"item":"@CAKE_RABBIT","user":"7642260","count":1,"msg":""},"type":"gift","action":"sendGift"}
+#        for _ in range (100):
+#            time.sleep(5)
+#            self._get_events_sender().send_game_events([event])
+
         graves = self._get_game_location().get_all_objects_by_types(
                             self.get_worker_types())
         for grave in graves:
