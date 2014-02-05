@@ -16,21 +16,29 @@ class HarvesterBot(BaseActor):
         trees = self._get_game_location().get_all_objects_by_type(
             GameFruitTree.type)
         harvestItems = plants + trees
+        pick_events = []
         for harvestItem in list(harvestItems):
-            self._pick_harvest(harvestItem)
+            pick_event = self._pick_harvest(harvestItem)
+            if pick_event:
+                pick_events.append(pick_event)
+        if pick_events:
+            self._get_events_sender().send_game_events(pick_events)
 
         slags = self._get_game_location().get_all_objects_by_type(
             GameSlag.type)
+        dig_events = []
         for slag in list(slags):
             item = self._get_item_reader().get(slag.item)
             logger.info(u"Копаем '" + item.name + "' " + str(slag.id) +
                         u" по координатам (" +
                         str(slag.x) + ", " + str(slag.y) + u")")
             dig_event = GameDigItem(slag.id)
-            self._get_events_sender().send_game_events([dig_event])
+            dig_events.append(dig_event)
             # convert slag to ground
             slag.type = 'base'
             slag.item = '@GROUND'
+        if dig_events:
+            self._get_events_sender().send_game_events(dig_events)
 
     def _pick_harvest(self, harvestItem):
         if self._get_timer().has_elapsed(harvestItem.jobFinishTime):
@@ -40,7 +48,6 @@ class HarvesterBot(BaseActor):
                         u" по координатам (" +
                         str(harvestItem.x) + u", " + str(harvestItem.y) + u")")
             pick_event = GamePickItem(objId=harvestItem.id)
-            self._get_events_sender().send_game_events([pick_event])
             if harvestItem.type == GamePlant.type:
                 # convert plant to slag
                 harvestItem.type = GameSlag.type
@@ -54,11 +61,13 @@ class HarvesterBot(BaseActor):
                     # harvestItem.type = GamePickItem.type
                     # TODO convert to pickup box
                     # convert tree to pick item
+            return pick_event
 
 
 class SeederBot(BaseActor):
 
     def perform_action(self):
+        buy_events = []
         grounds = self._get_game_location().get_all_objects_by_type('ground')
         for ground in list(grounds):
             item = self._get_item_reader().get(ground.item)
@@ -74,15 +83,17 @@ class SeederBot(BaseActor):
             buy_event = GameBuyItem(unicode(seed_item.id),
                                     ground.id,
                                     ground.y, ground.x)
-            self._get_events_sender().send_game_events([buy_event])
+            buy_events.append(buy_event)
             ground.type = u'plant'
             ground.item = unicode(seed_item.id)
+        if buy_events:
+            self._get_events_sender().send_game_events(buy_events)
 
     def _is_seed_available(self, seed_item):
         seed_reader = GameSeedReader(self._get_item_reader())
         game_state = self._get_game_state()
         return seed_reader.is_item_available(seed_item, game_state)
-
+    
 
 class GameSeedReader(LogicalItemReader):
 

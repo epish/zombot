@@ -15,13 +15,22 @@ from game_state.game_types import GameEVT, GameTIME, GameSTART, \
     GameFertilizePlant, GamePlayGame, \
     GameStartGainMaterial, GameStartTimeGainEvent
 import pprint
-from game_actors_and_handlers.gifts import GiftReceiverBot, AddGiftEventHandler
+from game_actors_and_handlers.gifts import GiftReceiverBot, AddGiftEventHandler, CakesReceiverBot
+from game_actors_and_handlers.haloween_gifts import TricksReceiverBot
 from game_actors_and_handlers.plants import HarvesterBot, SeederBot, \
     PlantEventHandler, GameSeedReader
+from game_actors_and_handlers.harvest_buff import GameBuffHarvest
+from game_actors_and_handlers.extra_money import HarvestExchange
+from game_actors_and_handlers.chop import PirateTreeCut
 from game_actors_and_handlers.roulettes import RouletteRoller, \
-    GameResultHandler
+    GameResultHandler, CherryRouletteRoller
 from game_actors_and_handlers.wood_graves import WoodPicker, \
     WoodTargetSelecter
+from game_actors_and_handlers.building_buyer import BuildingBuyer
+from game_actors_and_handlers.wand import MagicWand
+from game_actors_and_handlers.travel_buff import GameTravelBuff
+from game_actors_and_handlers.friend_dig import FriendDigger
+from game_actors_and_handlers.emerald import EmeraldExchange
 from game_actors_and_handlers.cook_graves import BrewPicker, CookerBot,\
                                                  RecipeReader
 from game_actors_and_handlers.digger_graves import BagsPicker, \
@@ -37,14 +46,15 @@ import socket
 import urllib2
 
 logger = logging.getLogger(__name__)
-
+EmeraldExchange
 
 
 class GameLocation():
 
-    def __init__(self, item_reader, game_location):
+    def __init__(self, item_reader, game_location, game_objects):
         self.__item_reader = item_reader
         self.__game_location = game_location
+        self.__game_objects = game_objects
         self.__pickups = []
 
     def append_object(self, obj):
@@ -54,7 +64,7 @@ class GameLocation():
         return self.__game_location
 
     def get_game_objects(self):
-        return self.get_game_location().gameObjects
+        return self.__game_objects
 
     def get_location_id(self):
         return self.__game_location.id
@@ -95,7 +105,7 @@ class GameLocation():
     def remove_pickup(self, pickup):
         self.__pickups.remove(pickup)
 
-
+EmeraldExchange
 class GameTimer(object):
 
     def __init__(self):
@@ -204,7 +214,7 @@ class GameInitializer():
         '''
         returns user info using vk api
         '''
-        # get vk user info
+        # get vk user infoEmeraldExchange
         api = vkontakte.api.API(token=self.__api_access_token)
         info = api.getProfiles(
             uids=self.__session.getUserId(), format='json',
@@ -241,10 +251,9 @@ class GameState():
 
     def set_game_loc(self, game_state_event):
         self.__game_loc = GameLocation(self.__item_reader,
-                                       game_state_event.location)
+                                       game_state_event.location, game_state_event.gameObjects)
         for attr, val in game_state_event.__dict__.iteritems():
             self.__game_state.__setattr__(attr, val)
-        #self.get_game_loc().log_game_objects()
 
     def get_location_id(self):
         return self.get_state().locationId
@@ -257,6 +266,17 @@ class GameState():
 
     def get_brains(self):
         return self.__player_brains
+
+    def has_in_storage(self, item_id, count):
+        for item in self.__game_state.storageItems:
+            if item.item == item_id:
+                return item.count >= count
+        return False
+
+    def remove_from_storage(self, item_id, count):
+        for item in self.__game_state.storageItems:
+            if item.item == item_id:
+                item.count -= count
 
 
 class Game():
@@ -272,13 +292,7 @@ class Game():
         self.__settings = settings
         self.__ignore_errors = settings.get_ignore_errors()
 
-        # load items dictionary
-        if game_item_reader is None:
-            self.__itemReader = GameItemReader()
-            self.__itemReader.download('items.txt')
-            self.__itemReader.read('items.txt')
-        else:
-            self.__itemReader = game_item_reader
+        self.__itemReader = game_item_reader
         self.__user_prompt = user_prompt
         self.__selected_seed = None
         self.__selected_recipe = None
@@ -334,6 +348,13 @@ class Game():
 
         while(self.running()):
             try:
+                # load items dictionary
+                if self.__itemReader is None:
+                    logger.info('Загружаем словарь объектов...')
+                    item_reader = GameItemReader()
+                    item_reader.download('items.txt')
+                    item_reader.read('items.txt')
+                    self.__itemReader = item_reader
                 start_response = self.__game_initializer.start()
                 self.__game_events_sender = self.__game_initializer.create_events_sender()
 
@@ -404,18 +425,29 @@ class Game():
         game_state = self.__game_state_
         actor_classes = [
             #ChangeLocationBot,
-            Pickuper,
+#            Pickuper,
+            #GameBuffHarvest,
             BoxPickuper,
             GiftReceiverBot,
+            CakesReceiverBot,
+            #TricksReceiverBot,
             HarvesterBot,
             SeederBot,
             CookerBot,
             RouletteRoller,
+            CherryRouletteRoller,
             WoodPicker,
             BrewPicker,
+            #MagicWand,
+            EmeraldExchange,
+#            BuildingBuyer,
             BagsPicker,
             WoodTargetSelecter,
+            PirateTreeCut,
+#            HarvestExchange,
+            GameTravelBuff,
             StonePicker,
+           # FriendDigger,
             StoneTargetSelecter,
         ]
         self.__actors = []

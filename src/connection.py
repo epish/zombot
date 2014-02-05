@@ -26,7 +26,9 @@ class Connection(object):
             time_format = '%a, %d %b %Y %H:%M:%S %Z'
             last_client_time = time.strftime(time_format, last_client_time)
             modified_headers = [('If-Modified-Since', last_client_time)]
-        response = self.__getResponse(data, modified_headers)
+        response = self.__getResponse(data, headers=modified_headers)
+        if not response:
+            raise ValueError("Error while fetching document.")
         if response.getcode() != 304:
             logger.info('document modified, downloading...')
             return self.__readContent(response)
@@ -46,7 +48,7 @@ class Connection(object):
         try:
             response = opener.open(self.__url, data, timeout=2)
         except urllib2.HTTPError, e:
-            logger.error('HTTP error:' + str(e.message))
+            logger.error('HTTP error:' + str(e.code) + " " + str(e.message))
             response = None
         return response
 
