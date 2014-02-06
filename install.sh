@@ -33,8 +33,8 @@ then
 	echo "making dir $USERDIR"
 	mkdir "$USERDIR"
 	echo "making symlik $PRGDIR/run.sh"
-	ln -s $(pwd)/run.sh "$USERDIR"/
-	exec sed -e "s/#EMAIL#/$USER/g" -e "s/#PASSWD#/$PASSWD/g" ./settings.example.ini > "$USERDIR/settings.ini"
+	ln -s $(pwd)/$PRGDIR/run.sh "$USERDIR"/
+	exec sed -e "s/#EMAIL#/$USER/g" -e "s/#PASSWD#/$PASSWD/g" $PRGDIR/settings.example.ini > "$USERDIR/settings.ini"
 	echo "Directory populated"
 else
 	exit $?
