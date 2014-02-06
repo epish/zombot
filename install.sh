@@ -14,11 +14,11 @@ check_dir()
 	return 0
 }
 
-if [ -n "$1" ]
-then
-	USER=$1
+if [ $# -eq 2 ]; then
+	USER="$1"
+	PASSWD="$2"
 else
-	echo "Usage `basename $0` username"
+	echo "found $# args Usage `basename $0` username password"
 	exit $E_BADARGS
 fi
 
@@ -34,7 +34,7 @@ then
 	mkdir "$USERDIR"
 	echo "making symlik $PRGDIR/run.sh"
 	ln -s $(pwd)/run.sh "$USERDIR"/
-	cp ./settings.ini "$USERDIR"
+	exec sed -e "s/#EMAIL#/$USER/g" -e "s/#PASSWD#/$PASSWD/g" ./settings.example.ini > "$USERDIR/settings.ini"
 	echo "Directory populated"
 else
 	exit $?
