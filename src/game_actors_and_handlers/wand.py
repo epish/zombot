@@ -21,10 +21,12 @@ class MagicWand(BaseActor):
             # make sure gain is not started yet
             resource = self.__find_first_gain_not_started(resources)
             if not resource:
-                logger.info("Все ресурсы уже добываются")
+                logger.info("Все ресурсы уже добыты")
             else:
                 for _ in range(resource.materialCount):
+                    resource_name = self._get_item_reader().get(resource.item).name
                     gain_event = {"action":"magic","type":"item","objId":resource.id}
+                    logger.info(u'Добываем палочкой: %s %i' % (resource_name, resource.id))
                     self._get_events_sender().send_game_events( [gain_event] )
                     resource.gainStarted = True
         else:
@@ -34,4 +36,3 @@ class MagicWand(BaseActor):
         for resource in resources:
             if not resource.gainStarted:
                 return resource
-

@@ -49,7 +49,7 @@ class GameTravelBuff(BaseActor):
                         sharp = one_item.materials[0].item
                         sharp_count = one_item.materials[0].count
                         books = one_item.materials[1].item
-                        books_count = one_item.materials[1].count
+                        books_count = one_item.materials[0].count
                 storage = self._get_game_state().get_state().storageItems
                 for item in storage:
                     if item.item == sharp:

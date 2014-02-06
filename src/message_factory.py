@@ -179,6 +179,9 @@ class Request():
                 error_msg = response["msg"]
                 logger.error(error_msg)
                 # TODO send error to the game server
+                open('error_log.txt','a').write("Connection: " + str(self.getData())+'\nResponse: '+str(response)+'\n\n')
+                logger.info("Connection : " + str(self.getData()))
+                logger.info("Response : " + str(response))
                 raise GameError("Game server returned error: " + error_msg)
         return response
 

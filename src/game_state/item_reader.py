@@ -5,6 +5,7 @@ import os
 import time
 from connection import Connection
 import pprint
+from settings import Settings
 
 
 class MyPrettyPrinter(pprint.PrettyPrinter):
@@ -18,6 +19,8 @@ class MyPrettyPrinter(pprint.PrettyPrinter):
 class GameItemReader():
     def __init__(self):
         self.content_dict = {}
+        settings = Settings()
+        self.__ignore_errors = settings.get_ignore_errors()
 
     def get(self, item_id):
         item_id = str(item_id).lstrip('@')
@@ -44,10 +47,22 @@ class GameItemReader():
     def download(self, filename):
         last_modified_time = self._getModificationTime(filename)
         url = 'http://java.shadowlands.ru/zombievk/items'
-        data = Connection(url).getChangedDocument(
-            data={'lang': 'ru'},
-            last_client_time=last_modified_time
-        )
+        if not self.__ignore_errors:
+          data = Connection(url).getChangedDocument(
+              data={'lang': 'ru'},
+              last_client_time=last_modified_time
+              )
+        else:
+          while 1:
+              try:
+                  print 'Download items...'
+                  data = Connection(url).getChangedDocument(
+                      data={'lang': 'ru'},
+                      last_client_time=last_modified_time
+                  )
+                  print 'Items downloaded!'
+                  break
+              except: print 'Refresh download...'
         with open(filename, 'w') as f:
             f.write(data.encode('utf-8'))
 

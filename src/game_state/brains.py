@@ -13,6 +13,7 @@ class PlayerBrains(object):
         'cookGraveWithBrains': 0,
         'guardGrave': 1,
         'stoneGrave': 1,
+        'stoneGraveDouble': 2,
     }
 
     def __init__(self, game_state, game_location, item_reader):
@@ -24,6 +25,9 @@ class PlayerBrains(object):
         brains_count = self.__game_state.brainsCount
         for buyed_brain in self.__game_state.buyedBrains:
             brains_count += buyed_brain.count
+        for burySlot in self.__game_state.burySlots:
+          if (hasattr(burySlot, u"user") is True):
+            brains_count += 1
         return brains_count
 
     def get_occupied_brains_count(self):
