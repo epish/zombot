@@ -1,6 +1,9 @@
 *.py[co]
 *.log
 
+# temp files
+*.swp
+
 # settings files
 *.ini
 src/html
